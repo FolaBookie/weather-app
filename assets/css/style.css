@@ -1,0 +1,59 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  background-color: #074d8f;
+  color: #fff;
+}
+
+aside {
+  flex-basis: 30%;
+}
+
+#wrapper,
+#forecast {
+  display: flex;
+  flex: 1;
+}
+
+form {
+  max-width: fit-content;
+}
+#forecast {
+  justify-content: space-between;
+  gap: 10px;
+}
+#today {
+  border: 1px solid #000;
+  margin-bottom: 8px;
+}
+.forecast-container {
+  flex: 1;
+  padding: 5px;
+}
+
+#forecast .card {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(42, 42, 73);
+  color: #fff;
+  padding: 10px;
+  min-width: 180px;
+  height: 220px;
+  gap: 10px;
+}
+
+#history li {
+  background-color: rgb(121, 114, 114);
+  margin: 5px 0;
+  list-style: none;
+  padding: 8px;
+  text-align: center;
+}
