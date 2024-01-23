@@ -14,9 +14,6 @@ async function fetchCityGeocodes(endpoint) {
     const response = await fetch(endpoint);
     const data = await response.json();
     geocodingData = data[0];
-    const h3Element = $("#card-title").text(
-      `${geocodingData.name}(${dayjs().format("MMMM D, YYYY")})`
-    );
   } catch (error) {
     geocodingData = null;
   }
@@ -32,7 +29,6 @@ async function fetchWeatherForecast(lat, long) {
   } catch (error) {
     weatherData = null;
   }
-  console.log(weatherData);
   const weatherForecast = [];
   const weatherForecastDays = [];
   weatherData.list.forEach(function (data) {
@@ -44,18 +40,22 @@ async function fetchWeatherForecast(lat, long) {
   });
   const forecast = $("#forecast");
   forecast.empty();
+  $("#forecast-heading").removeClass("hide");
   weatherForecast.forEach(function (data, index) {
     if (index === 0) {
-      displayCurrentConditions(data);
+      displayCurrentConditions(data, weatherData.city.name);
     } else {
       displayFutureConditions(data);
     }
   });
 }
 
-function displayCurrentConditions(currentConditions) {
+function displayCurrentConditions(currentConditions, city) {
+  $("#today").removeClass("hide");
   const iconUrl = `https://openweathermap.org/img/wn/${currentConditions.weather[0].icon}.png`;
-  console.log(currentConditions);
+  const h3Element = $("#card-title").text(
+    `${city}(${dayjs(currentConditions.dt_txt).format("MMMM D, YYYY")})`
+  );
   const icon = $("#icon").attr("src", iconUrl);
   const temperature = $("#temp").html(
     `Temperature: ${currentConditions.main.temp} &deg;C`
@@ -86,6 +86,7 @@ function displayFutureConditions(futureConditions) {
   card.append(cardBody);
   forecast.append(card);
 }
+
 // Function to update the search history
 function updateSearchHistory(city) {
   const searchHistory = JSON.parse(localStorage.getItem("history")) || [];
@@ -100,38 +101,30 @@ function displaySearchHistory() {
   const searchHistory = JSON.parse(localStorage.getItem("history")) || [];
   const historyList = $("#history");
   historyList.empty();
-  const listElement = $("<ul>");
   searchHistory.forEach((city) => {
-    const listItem = $("<li>").text(city);
-    listElement.append(listItem);
+    const button = $("<button>").text(city);
+    button.on("click", function () {
+      getCityWeatherData(city);
+    });
+    historyList.append(button);
   });
-  historyList.append(listElement);
+}
+
+async function getCityWeatherData(city) {
+  const geocodingEndpoint = generateGeocodingEndpoint(city);
+  const geocodingData = await fetchCityGeocodes(geocodingEndpoint);
+  await fetchWeatherForecast(geocodingData.lat, geocodingData.lon);
+  updateSearchHistory(geocodingData.name);
+  displaySearchHistory();
 }
 
 $("#search-form").on("submit", async function (e) {
   e.preventDefault();
   const inputValue = $("#search-input").val();
-  const geocodingEndpoint = generateGeocodingEndpoint(inputValue);
-  const geocodingData = await fetchCityGeocodes(geocodingEndpoint);
-  console.log(geocodingData);
-  await fetchWeatherForecast(geocodingData.lat, geocodingData.lon);
-  updateSearchHistory(geocodingData.name);
-  displaySearchHistory();
+  if (!inputValue.trim()) {
+    return;
+  }
+  getCityWeatherData(inputValue);
 });
 
 displaySearchHistory();
-// Create a weather dashboard with form inputs.
-// When a user searches for a city they are presented with current and future conditions for that city and that city is added to the search history
-// When a user views the current weather conditions for that city they are presented with:
-// The city name
-// The date
-// An icon representation of weather conditions
-// The temperature
-// The humidity
-// The wind speed
-// When a user view future weather conditions for that city they are presented with a 5-day forecast that displays:
-// The date
-// An icon representation of weather conditions
-// The temperature
-// The humidity
-// When a user click on a city in the search history they are again presented with current and future conditions for that city

@@ -6,15 +6,17 @@
 
 header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   text-align: center;
   background-color: #074d8f;
   color: #fff;
+  padding: 10px 0;
 }
 
 aside {
   flex-basis: 30%;
+  padding: 0 5px;
 }
 
 #wrapper,
@@ -23,8 +25,23 @@ aside {
   flex: 1;
 }
 
-form {
-  max-width: fit-content;
+#search-input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 3px;
+}
+button {
+  outline: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 3px;
+}
+#search-button {
+  background-color: #0770d2;
+  color: #fff;
+  margin: 8px 0;
 }
 #forecast {
   justify-content: space-between;
@@ -50,10 +67,18 @@ form {
   gap: 10px;
 }
 
-#history li {
-  background-color: rgb(121, 114, 114);
+#history {
+  display: flex;
+  flex-direction: column;
+}
+
+#history button {
+  background-color: rgb(165, 155, 155);
   margin: 5px 0;
   list-style: none;
   padding: 8px;
   text-align: center;
+}
+.hide {
+  display: none;
 }
